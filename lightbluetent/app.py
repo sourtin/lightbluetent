@@ -46,7 +46,16 @@ def configure_logging(app):
 
     if (email_config := app.config.get('EMAIL_CONFIGURATION')) is not None:
         email_config['toaddrs'] = app.config['MAINTAINERS']
+        print(email_config)
+        import smtplib
+        with smtplib.SMTP(*email_config['mailhost']) as smtp:
+            smtp.set_debuglevel(1)
+            smtp.starttls()
+            smtp.login(*email_config['credentials'])
+            msg = "From: %s\r\nTo: %s\r\n\r\nTest" % (email_config['fromaddr'], ', '.join(email_config['toaddrs']))
+            smtp.sendmail(email_config['fromaddr'], email_config['toaddrs'], msg)
         mail_handler = logging.handlers.SMTPHandler(**email_config)
+        mail_handler.emit(logging.LogRecord(None, None, "", 0, "", (), None, None))
         mail_handler.setLevel(logging.ERROR)
         gunicorn_logger.addHandler(mail_handler)
 

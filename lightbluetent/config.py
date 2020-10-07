@@ -150,10 +150,14 @@ class ProductionConfig(Config):
     """Production configuration"""
 
     PRODUCTION = True
+
+    user = 'abc123'
     EMAIL_CONFIGURATION = {
-        'mailhost': 'localhost',
-        'fromaddr': 'lightbluetent@srcf.net',
-        'subject': 'LightBlueTent Error'
+        'mailhost': ('smtp.srcf.net',587),
+        'fromaddr': f'{user}@srcf.net',
+        'subject': 'LightBlueTent Error',
+        'secure': (),
+        'credentials': (user, '~PASSWORD~')
     }
 
 
